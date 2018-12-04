@@ -4,10 +4,13 @@ import com.mir00r.dao.BlogMockedData;
 import com.mir00r.dbrepository.BlogRespository;
 import com.mir00r.model.Blog;
 import com.mir00r.model.LoginData;
+import com.mir00r.model.LoginRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -28,22 +31,39 @@ public class BlogController {
         return blogMockedData.getBlogById(blogId);
     }
 
-    @PostMapping(value = "/api/login",
+    /*@PostMapping(value = "/api/login",
             //headers = {"Accept = application /x-www-form-urlencoded", "Content-Type=application/json"},
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE},
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.APPLICATION_JSON_VALUE}
     )
     public LoginData postLogin(@RequestBody Map<String, String> body) {
         String userName = body.get("username");
+        //String userName = String.valueOf(body.get("username"));
         String password = body.get("password");
+        //String password = String.valueOf(body.get("password"));
         return blogMockedData.getLoginToken(userName, password);
-    }
+    }*/
 
     /*@RequestMapping(value = "/api/login", method = RequestMethod.POST,
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE},
-            produces = {MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.APPLICATION_JSON_VALUE})
+            consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE},
+            produces = {MediaType.APPLICATION_ATOM_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public @ResponseBody
-    LoginData postLogin(@PathVariable("username") String userName, @PathVariable("password") String password) {
+    LoginData postLogin(@PathVariable("username") String userName, @PathVariable("password") String password, MultiValueMap paramMap) throws Exception{
+        if(paramMap == null && paramMap.get("password") == null) {
+            throw new IllegalArgumentException("Password not provided");
+        }
+        return blogMockedData.getLoginToken(userName, password);
+    }*/
+
+    @RequestMapping(value = "/api/login")
+    public LoginData postLogin(@Valid @RequestBody LoginRequest request) {
+        return blogMockedData.getLoginToken(request.getUsername(), request.getPassword());
+    }
+
+    /*@RequestMapping(value = "/api/login", method = RequestMethod.POST)
+    public LoginData postLogin(@Valid @RequestBody Map<String, String> body) {
+        String userName = body.get("username");
+        String password = body.get("password");
         return blogMockedData.getLoginToken(userName, password);
     }*/
 
